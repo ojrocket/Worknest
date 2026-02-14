@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'src/app_theme.dart';
 import 'src/navigation/app_shell.dart';
+import 'src/screens/sign_in_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

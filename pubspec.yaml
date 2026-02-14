@@ -24,12 +24,16 @@ dependencies:
   bloc: ^8.1.4
 
   # For mocked OCR/demo
-  google_mlkit_text_recognition: ^0.15.1 # Android (requires setup). iOS stub.
 
   # For charts in wellbeing
   fl_chart: ^0.68.0
   encrypt: ^5.0.3
   crypto: ^3.0.7
+  image_picker: ^1.0.7
+  http: ^1.2.0
+  google_generative_ai: ^0.4.0
+  pdf: ^3.10.4
+  printing: ^5.11.0
 
 dev_dependencies:
   flutter_test:

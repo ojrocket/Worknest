@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 import '../screens/circles_screen.dart';
+import '../screens/groups_screen.dart';
+import '../screens/calls_screen.dart';
 import '../screens/work_screen.dart';
 import '../screens/scanner_screen.dart';
 import '../screens/you_screen.dart';
@@ -18,7 +20,7 @@ class _AppShellState extends State<AppShell> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this, initialIndex: 1);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: 0);
   }
 
   @override
@@ -57,9 +59,8 @@ class _AppShellState extends State<AppShell> with SingleTickerProviderStateMixin
           indicatorWeight: 3,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold),
           tabs: [
-            Tab(icon: Icon(Icons.groups)),
             Tab(text: 'CHATS'),
-            Tab(text: 'STATUS'),
+            Tab(text: 'GROUPS'),
             Tab(text: 'CALLS'),
           ],
         ),
@@ -67,10 +68,9 @@ class _AppShellState extends State<AppShell> with SingleTickerProviderStateMixin
       body: TabBarView(
         controller: _tabController,
         children: [
-          const Center(child: Text('Communities')),
           const CirclesScreen(),
-          const Center(child: Text('Status View')),
-          const Center(child: Text('Calls View')),
+          const GroupsScreen(),
+          const CallsScreen(),
         ],
       ),
       floatingActionButton: FloatingActionButton(

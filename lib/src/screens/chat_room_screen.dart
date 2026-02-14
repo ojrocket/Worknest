@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'; // for kIsWeb
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import '../services/encryption_service.dart';
+import '../services/chat_service.dart';
 import '../app_theme.dart';
 
 class ChatRoomScreen extends StatefulWidget {
@@ -12,27 +16,63 @@ class ChatRoomScreen extends StatefulWidget {
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, dynamic>> _messages = [
-    {'text': 'Hey there!', 'isSelf': false, 'isEncrypted': true},
-    {'text': 'Hello! How are you?', 'isSelf': true, 'isEncrypted': true},
-  ];
+  final ScrollController _scrollController = ScrollController();
+  final ImagePicker _picker = ImagePicker();
+  final ChatService _chatService = ChatService();
+  List<Map<String, dynamic>> _messages = [];
+
+  void _refresh() {
+    if (mounted) {
+      setState(() {
+        _messages = _chatService.getMessages(widget.chatName);
+      });
+      _scrollToBottom();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _chatService.addListener(_refresh);
+    _messages = _chatService.getMessages(widget.chatName);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+  }
+
+  @override
+  void dispose() {
+    _chatService.removeListener(_refresh);
+    super.dispose();
+  }
 
   void _sendMessage() {
     if (_controller.text.trim().isEmpty) return;
     
-    // In a real app, we would encrypt before sending to server
-    // Here we show the "encrypted" state for demo
     final plainText = _controller.text;
-    final encrypted = EncryptionService.encryptMessage(plainText);
     
-    setState(() {
-      _messages.add({
-        'text': plainText, // Store plain for local display
-        'isSelf': true,
-        'encryptedText': encrypted,
-        'isEncrypted': true,
-      });
-      _controller.clear();
+    _chatService.sendMessage(widget.chatName, plainText);
+    _controller.clear();
+  }
+
+  Future<void> _sendImage(ImageSource source) async {
+    try {
+      final XFile? photo = await _picker.pickImage(source: source);
+      if (photo != null) {
+        _chatService.sendMessage(widget.chatName, '📷 Image', type: 'image', path: photo.path);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+    }
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
@@ -57,18 +97,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       body: Container(
         decoration: BoxDecoration(
           color: AppColors.chatBackground,
-          image: DecorationImage(
-            image: NetworkImage('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'),
-            fit: BoxFit.cover,
-
-            opacity: 0.08,
-          ),
         ),
 
         child: Column(
           children: [
             Expanded(
               child: ListView.builder(
+                controller: _scrollController,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 itemCount: _messages.length,
                 itemBuilder: (context, index) {
@@ -76,7 +111,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   return _ChatBubble(
                     text: msg['text'],
                     isSelf: msg['isSelf'],
-                    isEncrypted: msg['isEncrypted'],
+                    isEncrypted: msg['isEncrypted'] ?? false,
+                    type: msg['type'] ?? 'text',
+                    imagePath: msg['path'] ?? msg['imagePath'],
                   );
                 },
               ),
@@ -98,28 +135,40 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(25),
+                border: Border.all(color: Colors.grey.shade300),
               ),
               child: Row(
                 children: [
-                  IconButton(icon: const Icon(Icons.emoji_emotions_outlined, color: Colors.grey), onPressed: () {}),
+                  IconButton(
+                    icon: const Icon(Icons.emoji_emotions_outlined, color: Colors.grey), 
+                    onPressed: () {},
+                  ),
                   Expanded(
                     child: TextField(
                       controller: _controller,
                       decoration: const InputDecoration(
                         hintText: 'Message',
                         border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
                       ),
+                      onSubmitted: (_) => _sendMessage(),
                     ),
                   ),
-                  IconButton(icon: const Icon(Icons.attach_file, color: Colors.grey), onPressed: () {}),
-                  IconButton(icon: const Icon(Icons.camera_alt, color: Colors.grey), onPressed: () {}),
+                  IconButton(
+                    icon: const Icon(Icons.attach_file, color: Colors.grey), 
+                    onPressed: () => _sendImage(ImageSource.gallery),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.camera_alt, color: Colors.grey), 
+                    onPressed: () => _sendImage(ImageSource.camera),
+                  ),
                 ],
               ),
             ),
           ),
           const SizedBox(width: 8),
           CircleAvatar(
-            backgroundColor: const Color(0xFF128C7E),
+            backgroundColor: Theme.of(context).colorScheme.primary,
             radius: 24,
             child: IconButton(
               icon: const Icon(Icons.send, color: Colors.white),
@@ -136,8 +185,16 @@ class _ChatBubble extends StatelessWidget {
   final String text;
   final bool isSelf;
   final bool isEncrypted;
+  final String type;
+  final String? imagePath;
 
-  const _ChatBubble({required this.text, required this.isSelf, this.isEncrypted = false});
+  const _ChatBubble({
+    required this.text, 
+    required this.isSelf, 
+    this.isEncrypted = false,
+    this.type = 'text',
+    this.imagePath,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +202,7 @@ class _ChatBubble extends StatelessWidget {
       alignment: isSelf ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.all(4), 
         constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
         decoration: BoxDecoration(
           color: isSelf ? AppColors.bubbleSelf : AppColors.bubbleOther,
@@ -166,20 +223,50 @@ class _ChatBubble extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(text, style: const TextStyle(fontSize: 16)),
+            if ((type == 'image' || type == 'file') && imagePath != null)
+              type == 'image' 
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: kIsWeb 
+                    ? Image.network(imagePath!, height: 200, width: 200, fit: BoxFit.cover)
+                    : Image.file(File(imagePath!), height: 200, width: 200, fit: BoxFit.cover),
+                )
+              : Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.picture_as_pdf, color: Colors.red),
+                      const SizedBox(width: 8),
+                      Flexible(child: Text(imagePath!, overflow: TextOverflow.ellipsis)),
+                    ],
+                  ),
+                ),
+            if (type == 'text' || type == 'file') // Show text for file as caption
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Text(text, style: TextStyle(fontSize: 16, color: isSelf ? Colors.white : Colors.black)),
+              ),
             const SizedBox(height: 2),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isEncrypted)
-                  const Icon(Icons.lock_outline, size: 10, color: Colors.grey),
-                const SizedBox(width: 4),
-                const Text('12:00 PM', style: TextStyle(fontSize: 10, color: Colors.grey)),
-                if (isSelf) ...[
+            Padding(
+              padding: const EdgeInsets.only(right: 4, bottom: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isEncrypted)
+                    Icon(Icons.lock_outline, size: 10, color: isSelf ? Colors.white70 : Colors.grey),
                   const SizedBox(width: 4),
-                  const Icon(Icons.done_all, size: 14, color: Colors.blue),
+                  Text('12:00 PM', style: TextStyle(fontSize: 10, color: isSelf ? Colors.white70 : Colors.grey)),
+                  if (isSelf) ...[
+                    const SizedBox(width: 4),
+                    const Icon(Icons.done_all, size: 14, color: Colors.white),
+                  ],
                 ],
-              ],
+              ),
             ),
           ],
         ),

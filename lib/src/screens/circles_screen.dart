@@ -1,19 +1,36 @@
 import 'package:flutter/material.dart';
 import 'chat_room_screen.dart';
+import '../services/chat_service.dart';
 
-class CirclesScreen extends StatelessWidget {
+class CirclesScreen extends StatefulWidget {
   const CirclesScreen({super.key});
 
   @override
+  State<CirclesScreen> createState() => _CirclesScreenState();
+}
+
+class _CirclesScreenState extends State<CirclesScreen> {
+  final ChatService _chatService = ChatService();
+
+  void _refresh() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _chatService.addListener(_refresh);
+  }
+
+  @override
+  void dispose() {
+    _chatService.removeListener(_refresh);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> chats = [
-      {'name': 'Alex', 'message': 'Hey, how is the project?', 'time': '10:30 AM', 'unread': '2'},
-      {'name': 'Sarah', 'message': 'See you tomorrow!', 'time': '9:15 AM', 'unread': '0'},
-      {'name': 'Work Group', 'message': 'Meeting at 2 PM', 'time': 'Yesterday', 'unread': '5'},
-      {'name': 'John', 'message': 'Got it, thanks!', 'time': 'Wednesday', 'unread': '0'},
-      {'name': 'Design Team', 'message': 'New mockups are ready', 'time': 'Tuesday', 'unread': '0'},
-      {'name': 'Mom', 'message': 'Call me later', 'time': 'Monday', 'unread': '1'},
-    ];
+    final chats = _chatService.chats;
 
     return Scaffold(
       body: ListView.separated(

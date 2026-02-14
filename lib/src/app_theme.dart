@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const primary = Color(0xFF075E54); // WhatsApp Dark Teal
-  static const secondary = Color(0xFF128C7E); // WhatsApp Teal
-  static const lightGreen = Color(0xFF25D366); // WhatsApp Green
-  static const chatBackground = Color(0xFFECE5DD);
-  static const bubbleSelf = Color(0xFFDCF8C6);
-  static const bubbleOther = Color(0xFFFFFFFF);
+  static const primary = Color(0xFF3F51B5); // Indigo
+  static const secondary = Color(0xFF7986CB); // Lighter Indigo
+  static const accent = Color(0xFFFF4081); // Pink Accent
   
-  static const ink = Color(0xFF000000);
-  static const night = Color(0xFF121B22); // Dark mode bg
-  static const surfaceDark = Color(0xFF1F2C34);
-  static const mist = Color(0xFFE9EDEF);
+  static const chatBackground = Color(0xFFE8EAF6); // Very light indigo
+  static const bubbleSelf = Color(0xFF3F51B5); // Primary Indigo for self
+  static const bubbleOther = Color(0xFFFFFFFF); // White bubble
+  
+  static const ink = Color(0xFF263238); // Dark Blue Grey
+  static const night = Color(0xFF121212); // Near Black
+  static const surfaceDark = Color(0xFF1E1E1E);
+  static const mist = Color(0xFFCFD8DC); // Blue Grey Light
   static const paper = Color(0xFFFFFFFF);
 }
 
@@ -42,7 +43,7 @@ ThemeData buildTheme(Brightness brightness) {
       elevation: 0,
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: AppColors.lightGreen,
+      backgroundColor: AppColors.accent,
       foregroundColor: Colors.white,
       shape: CircleBorder(),
     ),

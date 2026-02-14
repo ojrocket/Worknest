@@ -1,0 +1,32 @@
+Analyzing kindred_work_wellbeing...                             
+
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\src\navigation\app_shell.dart:59:17 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\src\navigation\app_shell.dart:60:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\src\navigation\app_shell.dart:60:23 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\src\navigation\app_shell.dart:61:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\src\navigation\app_shell.dart:62:13 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\src\navigation\app_shell.dart:63:13 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\src\navigation\app_shell.dart:69:19 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\src\screens\chat_room_screen.dart:58:21 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\src\screens\chat_room_screen.dart:60:18 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\src\screens\chat_room_screen.dart:61:20 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\src\screens\chat_room_screen.dart:160:35 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\src\screens\circles_screen.dart:41:33 - prefer_const_constructors
+   info - The constant name 'Box_Circle' isn't a lowerCamelCase identifier - lib\src\screens\circles_screen.dart:59:7 - constant_identifier_names
+   info - Use 'const' with the constructor to improve performance - lib\src\screens\work_screen.dart:31:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\src\screens\work_screen.dart:36:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\src\screens\work_screen.dart:41:41 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\src\screens\work_screen.dart:46:41 - prefer_const_constructors
+warning - The declaration '<unnamed>' isn't referenced - lib\src\services\encryption_service.dart:1:1 - unused_element
+  error - Expected a method, getter, setter or operator declaration - lib\src\services\encryption_service.dart:1:1 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\src\services\encryption_service.dart:1:2 - expected_executable
+  error - Expected a method, getter, setter or operator declaration - lib\src\services\encryption_service.dart:1:3 - expected_executable
+  error - Expected to find ';' - lib\src\services\encryption_service.dart:1:4 - expected_token
+  error - Undefined class 'dart' - lib\src\services\encryption_service.dart:1:4 - undefined_class
+  error - Directives must appear before any declarations - lib\src\services\encryption_service.dart:2:1 - directive_after_declaration
+  error - Expected an identifier - lib\src\services\encryption_service.dart:2:1 - missing_identifier
+  error - Directives must appear before any declarations - lib\src\services\encryption_service.dart:3:1 - directive_after_declaration
+  error - Directives must appear before any declarations - lib\src\services\encryption_service.dart:4:1 - directive_after_declaration
+  error - The name 'MyApp' isn't a class - test\widget_test.dart:16:35 - creation_with_non_type
+
+28 issues found. (ran in 1.8s)
