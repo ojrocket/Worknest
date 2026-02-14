@@ -1,4 +1,4 @@
-# Kindred Work & Wellbeing (Starter App)
+# Worknet & Wellbeing (Starter App)
 
 A Flutter starter you can **build and run today** (Android & iOS). It includes:
 - Home, Circles (chat), Work hub (Docs, Sheets, Slides), Scanner (stub OCR), You (wellbeing)
