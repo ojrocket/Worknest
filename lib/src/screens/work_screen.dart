@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'tasks_screen.dart';
-import '../services/chat_service.dart';
+import 'send_to_contact_dialog.dart';
 
 class WorkScreen extends StatelessWidget {
   const WorkScreen({super.key});
@@ -8,177 +7,155 @@ class WorkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Work'),
-          bottom: const TabBar(
-            isScrollable: true,
-            tabs: [
-            Tab(text: 'Tasks'), // New Tab
-            Tab(text: 'Docs'),
-            Tab(text: 'Sheets'),
-            Tab(text: 'Slides'),
-            Tab(text: 'Scans'),
-          ]),
-        ),
-        body: TabBarView(children: [
-          const TasksScreen(), // New Screen
-          const _DocsTab(), 
-          const _SheetsTab(), 
-          const _SlidesTab(), 
-          const _ScansTab()
-        ]),
+      length: 4,
+      child: Column(
+        children: [
+          Material(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+            child: const TabBar(
+              labelColor: Colors.indigo,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: Colors.indigo,
+              tabs: [
+                Tab(text: 'Docs'),
+                Tab(text: 'Sheets'),
+                Tab(text: 'Slides'),
+                Tab(text: 'Scans'),
+              ],
+            ),
+          ),
+          const Expanded(
+            child: TabBarView(
+              children: [_DocsTab(), _SheetsTab(), _SlidesTab(), _ScansTab()],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
+// ──────────────────── Docs Tab ────────────────────
 
 class _DocsTab extends StatelessWidget {
   const _DocsTab();
 
-  void _sharePdf(BuildContext context, String fileName) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        final chatService = ChatService();
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text('Share "$fileName" with...', style: Theme.of(context).textTheme.titleLarge),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: chatService.chats.length,
-                itemBuilder: (context, index) {
-                  final chat = chatService.chats[index];
-                  return ListTile(
-                    leading: CircleAvatar(child: Text(chat['name'][0])),
-                    title: Text(chat['name']),
-                    onTap: () {
-                      chatService.sendPdf(chat['name'], fileName);
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Sent "$fileName" to ${chat['name']}')),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final docs = ['Project-Specs.pdf', 'Budget-2024.pdf', 'Design-Brief.pdf'];
+    final docs = [
+      {'name': 'Project Proposal v2.docx', 'date': 'Feb 14, 2026', 'size': '245 KB', 'icon': Icons.description, 'color': Colors.blue},
+      {'name': 'Meeting Notes - Sprint 12.docx', 'date': 'Feb 13, 2026', 'size': '128 KB', 'icon': Icons.description, 'color': Colors.blue},
+      {'name': 'Employee Handbook 2026.pdf', 'date': 'Feb 10, 2026', 'size': '1.2 MB', 'icon': Icons.picture_as_pdf, 'color': Colors.red},
+      {'name': 'Q1 Goals & OKRs.pdf', 'date': 'Feb 8, 2026', 'size': '340 KB', 'icon': Icons.picture_as_pdf, 'color': Colors.red},
+      {'name': 'Onboarding Checklist.docx', 'date': 'Feb 5, 2026', 'size': '98 KB', 'icon': Icons.description, 'color': Colors.blue},
+    ];
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: docs.length,
-      separatorBuilder: (_, __) => const Divider(),
-      itemBuilder: (context, index) {
-        return ListTile(
-          leading: const Icon(Icons.picture_as_pdf, color: Colors.red, size: 40),
-          title: Text(docs[index]),
-          subtitle: const Text('2.4 MB • Modified today'),
-          trailing: IconButton(
-            icon: const Icon(Icons.share, color: Colors.blue),
-            onPressed: () => _sharePdf(context, docs[index]),
-          ),
-        );
-      },
-    );
+    return _DocumentList(docs: docs);
   }
 }
+
+// ──────────────────── Sheets Tab ────────────────────
 
 class _SheetsTab extends StatelessWidget {
   const _SheetsTab();
+
   @override
   Widget build(BuildContext context) {
-    final sheets = ['Budget_Q1.xlsx', 'Attendees_List.xlsx', 'Inventory.xlsx'];
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: sheets.length,
-      separatorBuilder: (_, __) => const Divider(),
-      itemBuilder: (context, index) {
-        return ListTile(
-          leading: const Icon(Icons.table_chart, color: Colors.green, size: 40),
-          title: Text(sheets[index]),
-          subtitle: const Text('Spreadsheet • Edited yesterday'),
-          trailing: const Icon(Icons.more_vert),
-        );
-      },
-    );
+    final sheets = [
+      {'name': 'Budget Q1 2026.xlsx', 'date': 'Feb 14, 2026', 'size': '520 KB', 'icon': Icons.grid_on, 'color': Colors.green},
+      {'name': 'Expense Tracker - Feb.xlsx', 'date': 'Feb 12, 2026', 'size': '180 KB', 'icon': Icons.grid_on, 'color': Colors.green},
+      {'name': 'Team Roster & Skills Matrix.xlsx', 'date': 'Feb 9, 2026', 'size': '310 KB', 'icon': Icons.grid_on, 'color': Colors.green},
+      {'name': 'KPI Dashboard Data.xlsx', 'date': 'Feb 6, 2026', 'size': '890 KB', 'icon': Icons.grid_on, 'color': Colors.green},
+    ];
+
+    return _DocumentList(docs: sheets);
   }
 }
+
+// ──────────────────── Slides Tab ────────────────────
 
 class _SlidesTab extends StatelessWidget {
   const _SlidesTab();
+
   @override
   Widget build(BuildContext context) {
-     final slides = ['Q1_Review_Deck.pptx', 'Pitch_Deck_v2.pptx'];
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: slides.length,
-      separatorBuilder: (_, __) => const Divider(),
-      itemBuilder: (context, index) {
-        return ListTile(
-          leading: const Icon(Icons.slideshow, color: Colors.orange, size: 40),
-          title: Text(slides[index]),
-          subtitle: const Text('Presentation • Edited 2 days ago'),
-          trailing: const Icon(Icons.more_vert),
-        );
-      },
-    );
+    final slides = [
+      {'name': 'Product Roadmap 2026.pptx', 'date': 'Feb 13, 2026', 'size': '4.5 MB', 'icon': Icons.slideshow, 'color': Colors.orange},
+      {'name': 'Investor Pitch Deck.pptx', 'date': 'Feb 10, 2026', 'size': '8.2 MB', 'icon': Icons.slideshow, 'color': Colors.orange},
+      {'name': 'Team Retro Feb.pptx', 'date': 'Feb 7, 2026', 'size': '1.1 MB', 'icon': Icons.slideshow, 'color': Colors.orange},
+    ];
+
+    return _DocumentList(docs: slides);
   }
 }
+
+// ──────────────────── Scans Tab ────────────────────
 
 class _ScansTab extends StatelessWidget {
   const _ScansTab();
+
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
-      padding: const EdgeInsets.all(16),
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      children: List.generate(4, (index) {
-        return Container(
-          color: Colors.grey[200],
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.image, size: 50, color: Colors.grey),
-              Text('Scan_${index + 1}.jpg'),
-            ],
-          ),
-        );
-      }),
-    );
+    final scans = [
+      {'name': 'Receipt - Office Supplies.pdf', 'date': 'Feb 14, 2026', 'size': '1.4 MB', 'icon': Icons.document_scanner, 'color': Colors.deepPurple},
+      {'name': 'Whiteboard Notes.pdf', 'date': 'Feb 11, 2026', 'size': '2.8 MB', 'icon': Icons.document_scanner, 'color': Colors.deepPurple},
+      {'name': 'ID Card Scan.pdf', 'date': 'Feb 3, 2026', 'size': '980 KB', 'icon': Icons.document_scanner, 'color': Colors.deepPurple},
+    ];
+
+    return _DocumentList(docs: scans);
   }
 }
 
-class _Placeholder extends StatelessWidget {
-  final String label;
-  const _Placeholder(this.label);
+// ──────────────────── Shared Document List Widget ────────────────────
+
+class _DocumentList extends StatelessWidget {
+  final List<Map<String, dynamic>> docs;
+  const _DocumentList({required this.docs});
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.construction, size: 48, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(height: 12),
-          Text('$label coming to life…', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 4),
-          const Text('This starter builds and runs now. Replace with full editors.'),
-        ],
-      ),
+    if (docs.isEmpty) {
+      return const Center(child: Text('No documents yet'));
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: docs.length,
+      separatorBuilder: (_, __) => const Divider(indent: 72, height: 1),
+      itemBuilder: (context, i) {
+        final doc = docs[i];
+        return ListTile(
+          leading: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: (doc['color'] as Color).withOpacity(0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(doc['icon'] as IconData, color: doc['color'] as Color),
+          ),
+          title: Text(
+            doc['name'] as String,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text('${doc['date']}  •  ${doc['size']}',
+              style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          trailing: IconButton(
+            icon: const Icon(Icons.send_rounded, color: Colors.indigo),
+            tooltip: 'Send to contact',
+            onPressed: () {
+              showSendToContactDialog(context, doc['name'] as String);
+            },
+          ),
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Opening ${doc['name']}')),
+            );
+          },
+        );
+      },
     );
   }
 }

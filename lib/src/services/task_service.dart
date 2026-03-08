@@ -18,11 +18,20 @@ class TaskService extends ChangeNotifier {
   TaskService._internal();
 
   final List<Task> _tasks = [
-    Task(id: '1', title: 'Review designs'),
-    Task(id: '2', title: 'Submit report'),
+    Task(id: '1', title: 'Review sprint designs', isCompleted: true),
+    Task(id: '2', title: 'Submit quarterly report'),
+    Task(id: '3', title: 'Update project documentation'),
+    Task(id: '4', title: 'Prepare team presentation', isCompleted: true),
+    Task(id: '5', title: 'Schedule 1-on-1 meetings'),
+    Task(id: '6', title: 'Code review for PR #142'),
   ];
 
   List<Task> get tasks => _tasks;
+
+  int get completedCount => _tasks.where((t) => t.isCompleted).length;
+  int get totalCount => _tasks.length;
+  double get completionPercentage =>
+      _tasks.isEmpty ? 0 : completedCount / totalCount;
 
   void addTask(String title) {
     _tasks.add(Task(id: DateTime.now().toString(), title: title));
