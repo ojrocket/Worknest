@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'; // for kIsWeb
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import '../services/encryption_service.dart';
 import '../services/chat_service.dart';
 import '../app_theme.dart';
 
@@ -46,9 +45,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 
   void _sendMessage() {
     if (_controller.text.trim().isEmpty) return;
-    
+
     final plainText = _controller.text;
-    
+
     _chatService.sendMessage(widget.chatName, plainText);
     _controller.clear();
   }
@@ -57,10 +56,12 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     try {
       final XFile? photo = await _picker.pickImage(source: source);
       if (photo != null) {
-        _chatService.sendMessage(widget.chatName, '📷 Image', type: 'image', path: photo.path);
+        _chatService.sendMessage(widget.chatName, '📷 Image',
+            type: 'image', path: photo.path);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error picking image: $e')));
     }
   }
 
@@ -85,7 +86,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
           children: [
             const CircleAvatar(radius: 18, child: Icon(Icons.person, size: 20)),
             const SizedBox(width: 8),
-            Text(widget.chatName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(widget.chatName,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ],
         ),
         actions: [
@@ -95,16 +98,16 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: AppColors.chatBackground,
         ),
-
         child: Column(
           children: [
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 itemCount: _messages.length,
                 itemBuilder: (context, index) {
                   final msg = _messages[index];
@@ -140,7 +143,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.emoji_emotions_outlined, color: Colors.grey), 
+                    icon: const Icon(Icons.emoji_emotions_outlined,
+                        color: Colors.grey),
                     onPressed: () {},
                   ),
                   Expanded(
@@ -155,11 +159,11 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.attach_file, color: Colors.grey), 
+                    icon: const Icon(Icons.attach_file, color: Colors.grey),
                     onPressed: () => _sendImage(ImageSource.gallery),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.camera_alt, color: Colors.grey), 
+                    icon: const Icon(Icons.camera_alt, color: Colors.grey),
                     onPressed: () => _sendImage(ImageSource.camera),
                   ),
                 ],
@@ -189,8 +193,8 @@ class _ChatBubble extends StatelessWidget {
   final String? imagePath;
 
   const _ChatBubble({
-    required this.text, 
-    required this.isSelf, 
+    required this.text,
+    required this.isSelf,
     this.isEncrypted = false,
     this.type = 'text',
     this.imagePath,
@@ -202,8 +206,9 @@ class _ChatBubble extends StatelessWidget {
       alignment: isSelf ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.all(4), 
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+        padding: const EdgeInsets.all(4),
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
         decoration: BoxDecoration(
           color: isSelf ? AppColors.bubbleSelf : AppColors.bubbleOther,
           borderRadius: BorderRadius.only(
@@ -224,32 +229,40 @@ class _ChatBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             if ((type == 'image' || type == 'file') && imagePath != null)
-              type == 'image' 
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: kIsWeb 
-                    ? Image.network(imagePath!, height: 200, width: 200, fit: BoxFit.cover)
-                    : Image.file(File(imagePath!), height: 200, width: 200, fit: BoxFit.cover),
-                )
-              : Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.picture_as_pdf, color: Colors.red),
-                      const SizedBox(width: 8),
-                      Flexible(child: Text(imagePath!, overflow: TextOverflow.ellipsis)),
-                    ],
-                  ),
-                ),
-            if (type == 'text' || type == 'file') // Show text for file as caption
+              type == 'image'
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: kIsWeb
+                          ? Image.network(imagePath!,
+                              height: 200, width: 200, fit: BoxFit.cover)
+                          : Image.file(File(imagePath!),
+                              height: 200, width: 200, fit: BoxFit.cover),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.picture_as_pdf, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Flexible(
+                              child: Text(imagePath!,
+                                  overflow: TextOverflow.ellipsis)),
+                        ],
+                      ),
+                    ),
+            if (type == 'text' ||
+                type == 'file') // Show text for file as caption
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Text(text, style: TextStyle(fontSize: 16, color: isSelf ? Colors.white : Colors.black)),
+                child: Text(text,
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: isSelf ? Colors.white : Colors.black)),
               ),
             const SizedBox(height: 2),
             Padding(
@@ -258,9 +271,13 @@ class _ChatBubble extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (isEncrypted)
-                    Icon(Icons.lock_outline, size: 10, color: isSelf ? Colors.white70 : Colors.grey),
+                    Icon(Icons.lock_outline,
+                        size: 10, color: isSelf ? Colors.white70 : Colors.grey),
                   const SizedBox(width: 4),
-                  Text('12:00 PM', style: TextStyle(fontSize: 10, color: isSelf ? Colors.white70 : Colors.grey)),
+                  Text('12:00 PM',
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: isSelf ? Colors.white70 : Colors.grey)),
                   if (isSelf) ...[
                     const SizedBox(width: 4),
                     const Icon(Icons.done_all, size: 14, color: Colors.white),

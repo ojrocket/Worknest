@@ -1,14 +1,6 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 class EmailService {
-  // Replace with your actual EmailJS Service ID, Template ID, and User ID
-  static const String _serviceId = 'YOUR_SERVICE_ID';
-  static const String _templateId = 'YOUR_TEMPLATE_ID';
-  static const String _userId = 'YOUR_USER_ID';
-
   static Future<void> sendOtpEmail(String recipientEmail, String otp) async {
-    final String subject = '🔐 Verify Your WorkNest Identity';
+    const String subject = '🔐 Verify Your WorkNest Identity';
     final String aiGeneratedBody = _generateAiTemplate(otp);
 
     // Simulation for demo purposes (logs the "AI Generated" email)
@@ -46,7 +38,7 @@ class EmailService {
       print('Error sending email: $e');
     }
     */
-    
+
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 1));
   }

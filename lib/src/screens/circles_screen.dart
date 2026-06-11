@@ -35,7 +35,8 @@ class _CirclesScreenState extends State<CirclesScreen> {
     return Scaffold(
       body: ListView.separated(
         itemCount: chats.length,
-        separatorBuilder: (context, index) => const Divider(indent: 72, height: 1),
+        separatorBuilder: (context, index) =>
+            const Divider(indent: 72, height: 1),
         itemBuilder: (context, i) {
           final chat = chats[i];
           return ListTile(
@@ -44,26 +45,40 @@ class _CirclesScreenState extends State<CirclesScreen> {
               backgroundColor: Colors.grey[300],
               child: const Icon(Icons.person, color: Colors.white, size: 30),
             ),
-            title: Text(chat['name']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(chat['message']!, maxLines: 1, overflow: TextOverflow.ellipsis),
+            title: Text(chat['name']!,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(chat['message']!,
+                maxLines: 1, overflow: TextOverflow.ellipsis),
             trailing: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(chat['time']!, style: TextStyle(color: chat['unread'] != '0' ? const Color(0xFF25D366) : Colors.grey, fontSize: 12)),
+                Text(chat['time']!,
+                    style: TextStyle(
+                        color: chat['unread'] != '0'
+                            ? const Color(0xFF25D366)
+                            : Colors.grey,
+                        fontSize: 12)),
                 if (chat['unread'] != '0')
                   Container(
                     margin: const EdgeInsets.only(top: 4),
                     padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(color: const Color(0xFF25D366), shape: BoxShape.circle),
-                    child: Text(chat['unread']!, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                    decoration: const BoxDecoration(
+                        color: Color(0xFF25D366), shape: BoxShape.circle),
+                    child: Text(chat['unread']!,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold)),
                   ),
               ],
             ),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChatRoomScreen(chatName: chat['name']!)),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        ChatRoomScreen(chatName: chat['name']!)),
               );
             },
           );
@@ -74,4 +89,3 @@ class _CirclesScreenState extends State<CirclesScreen> {
 }
 
 const Box_Circle = BoxShape.circle;
-

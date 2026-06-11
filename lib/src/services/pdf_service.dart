@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 
 class PdfService {
   static Future<Uint8List> generateReport(String content) async {
@@ -17,8 +16,13 @@ class PdfService {
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text('WorkNest AI Report', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold, color: PdfColors.indigo)),
-                  pw.Text(DateTime.now().toString().substring(0, 10), style: const pw.TextStyle(color: PdfColors.grey)),
+                  pw.Text('WorkNest AI Report',
+                      style: pw.TextStyle(
+                          fontSize: 24,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.indigo)),
+                  pw.Text(DateTime.now().toString().substring(0, 10),
+                      style: const pw.TextStyle(color: PdfColors.grey)),
                 ],
               ),
             ),

@@ -46,8 +46,9 @@ class _ScannerScreenState extends State<ScannerScreen> {
     setState(() => _isAnalyzing = true);
 
     // 1. Analyze with AI
-    final text = await AiService.analyzeImageAndGenerateReport(_selectedImage!.path);
-    
+    final text =
+        await AiService.analyzeImageAndGenerateReport(_selectedImage!.path);
+
     // 2. Generate PDF
     final pdfBytes = await PdfService.generateReport(text);
 
@@ -76,14 +77,15 @@ class _ScannerScreenState extends State<ScannerScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.document_scanner_rounded, size: 64, color: AppColors.primary),
+              const Icon(Icons.document_scanner_rounded,
+                  size: 64, color: AppColors.primary),
               const SizedBox(height: 24),
               Text(
                 'AI Smart Scanner',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.ink,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.ink,
+                    ),
               ),
               const SizedBox(height: 12),
               const Text(
@@ -96,8 +98,10 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: kIsWeb
-                      ? Image.network(_selectedImage!.path, height: 200, fit: BoxFit.cover)
-                      : Image.file(File(_selectedImage!.path), height: 200, fit: BoxFit.cover),
+                      ? Image.network(_selectedImage!.path,
+                          height: 200, fit: BoxFit.cover)
+                      : Image.file(File(_selectedImage!.path),
+                          height: 200, fit: BoxFit.cover),
                 ),
                 const SizedBox(height: 24),
               ],
@@ -117,7 +121,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       onPressed: () => _pickImage(ImageSource.gallery),
                       icon: const Icon(Icons.photo_library),
                       label: const Text('Gallery'),
-                      style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(20)),
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(20)),
                     ),
                     const SizedBox(width: 16),
                     if (_selectedImage != null)
@@ -136,7 +141,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         onPressed: () => _pickImage(ImageSource.camera),
                         icon: const Icon(Icons.camera_alt),
                         label: const Text('Camera'),
-                        style: ElevatedButton.styleFrom(padding: const EdgeInsets.all(20)),
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.all(20)),
                       ),
                   ],
                 ),
@@ -168,19 +174,27 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.warning_amber_rounded, color: Colors.amber),
+                      const Icon(Icons.warning_amber_rounded,
+                          color: Colors.amber),
                       const SizedBox(width: 8),
-                      Text('Related Discussions Found!', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                      Text('Related Discussions Found!',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(fontWeight: FontWeight.bold)),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
-                    children: _matchedChats.map((chat) => Chip(
-                      label: Text(chat),
-                      backgroundColor: Colors.white,
-                      avatar: const CircleAvatar(child: Icon(Icons.group, size: 14)),
-                    )).toList(),
+                    children: _matchedChats
+                        .map((chat) => Chip(
+                              label: Text(chat),
+                              backgroundColor: Colors.white,
+                              avatar: const CircleAvatar(
+                                  child: Icon(Icons.group, size: 14)),
+                            ))
+                        .toList(),
                   ),
                 ],
               ),

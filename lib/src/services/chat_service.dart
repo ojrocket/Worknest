@@ -17,8 +17,18 @@ class ChatService extends ChangeNotifier {
       'time': '10:30 AM',
       'unread': '2',
       'messages': [
-        {'text': 'Hey there!', 'isSelf': false, 'isEncrypted': true, 'type': 'text'},
-        {'text': 'Hello! How are you?', 'isSelf': true, 'isEncrypted': true, 'type': 'text'},
+        {
+          'text': 'Hey there!',
+          'isSelf': false,
+          'isEncrypted': true,
+          'type': 'text'
+        },
+        {
+          'text': 'Hello! How are you?',
+          'isSelf': true,
+          'isEncrypted': true,
+          'type': 'text'
+        },
       ]
     },
     {
@@ -37,7 +47,7 @@ class ChatService extends ChangeNotifier {
       'unread': '5',
       'messages': []
     },
-     {
+    {
       'id': '4',
       'name': 'Design Team',
       'message': 'New mockups are ready',
@@ -50,14 +60,16 @@ class ChatService extends ChangeNotifier {
   List<Map<String, dynamic>> get chats => _chats;
 
   List<Map<String, dynamic>> getMessages(String chatName) {
-    final chat = _chats.firstWhere((c) => c['name'] == chatName, orElse: () => {});
+    final chat =
+        _chats.firstWhere((c) => c['name'] == chatName, orElse: () => {});
     if (chat.isNotEmpty) {
       return List<Map<String, dynamic>>.from(chat['messages']);
     }
     return [];
   }
 
-  void sendMessage(String chatName, String text, {String type = 'text', String? path}) {
+  void sendMessage(String chatName, String text,
+      {String type = 'text', String? path}) {
     final index = _chats.indexWhere((c) => c['name'] == chatName);
     if (index != -1) {
       final newMessage = {
@@ -67,19 +79,44 @@ class ChatService extends ChangeNotifier {
         'type': type,
         if (path != null) 'path': path, // For files/images
       };
-      
+
       // Add to messages list
       (_chats[index]['messages'] as List).add(newMessage);
-      
+
       // Update snippet
       _chats[index]['message'] = type == 'text' ? text : 'Sent a file';
       _chats[index]['time'] = 'Now';
-      
+
       notifyListeners();
     }
   }
 
   void sendPdf(String chatName, String fileName) {
-    sendMessage(chatName, '📄 Shared PDF: $fileName', type: 'file', path: fileName);
+    sendMessage(chatName, '📄 Shared PDF: $fileName',
+        type: 'file', path: fileName);
+  }
+
+  /// Ensures a chat exists with the given name, optionally with initial messages
+  void ensureChat(String chatName,
+      {List<Map<String, dynamic>>? initialMessages}) {
+    // Check if chat already exists
+    if (_chats.any((c) => c['name'] == chatName)) {
+      return;
+    }
+
+    // Create new chat if it doesn't exist
+    final newChat = {
+      'id': DateTime.now().millisecondsSinceEpoch.toString(),
+      'name': chatName,
+      'message': initialMessages?.isNotEmpty ?? false
+          ? (initialMessages!.last['text'] ?? 'No messages')
+          : 'No messages',
+      'time': 'Now',
+      'unread': '0',
+      'messages': initialMessages ?? [],
+    };
+
+    _chats.add(newChat);
+    notifyListeners();
   }
 }
